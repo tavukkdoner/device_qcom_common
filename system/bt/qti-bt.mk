@@ -3,6 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Include QTI Bluetooth makefiles.
+ifeq ($(TARGET_FWK_SUPPORTS_FULL_VALUEADDS),true)
+include vendor/qcom/opensource/commonsys/bluetooth/bt-system-qssi-board.mk
+$(call inherit-product, vendor/qcom/opensource/commonsys/bluetooth/bt-system-opensource-product.mk)
+endif
+
 # Properties
 ifneq ($(TARGET_USE_QTI_BT_STACK),false)
 PRODUCT_SYSTEM_EXT_PROPERTIES += \

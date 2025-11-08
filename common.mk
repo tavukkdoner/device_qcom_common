@@ -209,10 +209,17 @@ TARGET_DYNAMIC_64_32_MEDIASERVER := true
 PRODUCT_SYSTEM_PROPERTIES += \
     ro.product.property_source_order=odm,vendor,product,system_ext,system
 
+
 # Protobuf
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full-3.9.1-vendorcompat \
     libprotobuf-cpp-lite-3.9.1-vendorcompat-new
+
+# Power
+ifneq ($(TARGET_PROVIDES_POWERHAL),true)
+$(call inherit-product-if-exists, vendor/qcom/opensource/power/power-vendor-product.mk)
+endif
+
 
 # QSPA
 PRODUCT_PACKAGES += \
@@ -242,6 +249,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_VENDOR_PROPERTIES += \
     ro.soc.manufacturer=QTI
 
+
 # TextClassifier
 PRODUCT_PACKAGES += \
     libtextclassifier_annotator_en_model \
@@ -252,6 +260,14 @@ PRODUCT_PACKAGES += \
 # usbudev service for usb ip assigment
 PRODUCT_PACKAGES += \
     usbudev
+
+# System Enable QCOM enhanced feature
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.vendor.qti.va_aosp.support=1
+
+PRODUCT_ODM_PROPERTIES += \
+    ro.vendor.qti.va_odm.support=1
+
 
 # RFS APQ GNSS symlinks
 PRODUCT_PACKAGES += \
