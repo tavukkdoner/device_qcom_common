@@ -1,16 +1,7 @@
-# Copyright (C) 2021 Paranoid Android
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# SPDX-FileCopyrightText: Paranoid Android
+# SPDX-License-Identifier: Apache-2.0
 #
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 # AIDL / HIDL
 SYSTEM_EXT_MANIFEST_FILES += $(QCOM_COMMON_PATH)/system/telephony/atcmdfwd-saidl.xml
@@ -25,18 +16,12 @@ PRODUCT_COPY_FILES += \
 
 # Packages
 PRODUCT_PACKAGES += \
-    android.hardware.radio@1.6 \
-    android.hardware.radio.config@1.3 \
-    android.hardware.radio.deprecated@1.0 \
-    android.system.net.netd@1.1 \
     extphonelib \
     extphonelib-product \
     extphonelib.xml \
     extphonelib_product.xml \
     ims-ext-common \
     ims_ext_common.xml \
-    libc++.product \
-    libjson \
     Stk \
     tcmiface \
     telephony-ext \
@@ -55,7 +40,6 @@ PRODUCT_BOOT_JARS += \
 
 # Properties
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    DEVICE_PROVISIONED=1 \
     net.tethering.noprovisioning=true \
     persist.sys.fflag.override.settings_network_and_internet_v2=true \
     persist.vendor.cne.feature=1 \
@@ -63,7 +47,7 @@ PRODUCT_SYSTEM_EXT_PROPERTIES += \
     persist.vendor.dpm.feature=11 \
     persist.vendor.dpm.idletimer.mode=default \
     ril.subscription.types=NV,RUIM \
-    ro.telephony.default_network=33,33 \
+    ro.telephony.default_network=26,26 \
     ro.telephony.sim_slots.count=2 \
     ro.vendor.use_data_netmgrd=true \
     telephony.active_modems.max_count=2 \

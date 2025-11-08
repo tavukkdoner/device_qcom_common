@@ -1,6 +1,5 @@
 #
-# Copyright (C) 2021-2022 Paranoid Android
-#
+# SPDX-FileCopyrightText: Paranoid Android
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -11,12 +10,6 @@ ifeq ($(TARGET_USES_NQ_NFC), true)
 # Inherit from NQ NFC.
 $(call inherit-product, vendor/nxp/opensource/commonsys/packages/apps/Nfc/nfc_system_product.mk)
 $(call inherit-product, vendor/nxp/opensource/halimpl/nfc_vendor_product.mk)
-
-# Packages
-PRODUCT_PACKAGES += \
-    se_nq_extn_client \
-    ls_nq_client \
-    jcos_nq_client
 
 # Permissions
 ifneq ($(TARGET_NFC_SKU),)

@@ -1,21 +1,17 @@
-# Copyright (C) 2021 Paranoid Android
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# SPDX-FileCopyrightText: Paranoid Android
+# SPDX-License-Identifier: Apache-2.0
 #
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 PRODUCT_SOONG_NAMESPACES += \
     device/qcom/common/vendor/media
 
-TARGET_MEDIA_COMPONENT_VARIANT := media
+# Use TARGET_KERNEL_VERSION for TARGET_MEDIA_DIR except for <5.4
+ifneq (,$(filter 4.4 4.9 4.14 4.19, $(TARGET_KERNEL_VERSION)))
+    TARGET_MEDIA_DIR := legacy
+else
+    TARGET_MEDIA_DIR := $(TARGET_KERNEL_VERSION)
+endif
 
 # Inherit configuration from the HAL.
 $(call inherit-product-if-exists, hardware/qcom/media/product.mk)
@@ -23,9 +19,6 @@ $(call inherit-product-if-exists, hardware/qcom/media/product.mk)
 # Enable 64-bit mediaserver
 PRODUCT_VENDOR_PROPERTIES += \
     ro.mediaserver.64b.enable=true
-
-PRODUCT_COPY_FILES += \
-    device/qcom/common/vendor/media/media_codecs_c2_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_c2_audio.xml
 
 # Packages
 PRODUCT_PACKAGES += \
@@ -38,9 +31,22 @@ PRODUCT_SYSTEM_EXT_PROPERTIES += \
     media.stagefright.thumbnail.prefer_hw_codecs=true \
     ro.media.recorder-max-base-layer-fps=60
 
-# Media Init
-PRODUCT_COPY_FILES += \
-    device/qcom/common/vendor/media/init.qti.media.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.qti.media.sh
+# Configure media stack for <5.4 targets
+ifneq (,$(filter 4.4 4.9 4.14 4.19, $(TARGET_KERNEL_VERSION)))
+    PRODUCT_COPY_FILES += \
+        device/qcom/common/vendor/media/media_profiles.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles.xml
+
+    ifneq ($(call is-board-platform-in-list, sm6150 msmnile kona),true)
+        PRODUCT_ODM_PROPERTIES += \
+            debug.stagefright.ccodec=0
+    endif
+endif
+
+# Configure media stack for >=5.4 targets
+ifeq (,$(filter 4.4 4.9 4.14 4.19, $(TARGET_KERNEL_VERSION)))
+    PRODUCT_COPY_FILES += \
+        device/qcom/common/vendor/media/$(TARGET_MEDIA_DIR)/init.qti.media.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.qti.media.sh
+endif
 
 # Get non-open-source specific aspects.
-$(call inherit-product-if-exists, vendor/qcom/common/vendor/media/media-vendor.mk)
+$(call inherit-product-if-exists, vendor/qcom/common/vendor/media/$(TARGET_MEDIA_DIR)/media-vendor.mk)

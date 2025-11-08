@@ -1,16 +1,7 @@
-# Copyright (C) 2022 Paranoid Android
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# SPDX-FileCopyrightText: Paranoid Android
+# SPDX-License-Identifier: Apache-2.0
 #
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 # Include display HAL makefiles.
 -include hardware/qcom/display/config/display-board.mk
@@ -23,17 +14,19 @@
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml
 
-# Packages
-PRODUCT_PACKAGES += \
-    android.hardware.graphics.common-V1-ndk.vendor \
-    libqdutils \
-    libqservice
+# Properties for <6.1 targets
+# These are already set on 6.1+.
+ifneq (,$(filter 3.18 4.4 4.9 4.14 4.19 5.4 5.10 5.15, $(TARGET_KERNEL_VERSION)))
+PRODUCT_ODM_PROPERTIES += \
+    debug.sf.auto_latch_unsignaled=1 \
+    debug.sf.disable_client_composition_cache=0
+endif
 
 # Properties for <5.15 targets
 # These are already set on 5.15+.
 ifneq (,$(filter 3.18 4.4 4.9 4.14 4.19 5.4 5.10, $(TARGET_KERNEL_VERSION)))
 PRODUCT_VENDOR_PROPERTIES += \
-    debug.sf.auto_latch_unsignaled=0
+    debug.graphics.game_default_frame_rate.disabled=1
 endif
 
 # Properties for <5.10 targets
@@ -44,13 +37,16 @@ PRODUCT_VENDOR_PROPERTIES += \
     debug.sf.treat_170m_as_sRGB=1
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.surface_flinger.game_default_frame_rate_override=60
+else
+# Properties for 5.10+ targets
+PRODUCT_ODM_PROPERTIES += \
+    ro.surface_flinger.clear_slots_with_set_layer_buffer=true
 endif
 
 # Properties for <5.4 targets
 # These are already set on 5.4+
 ifneq (,$(filter 3.18 4.4 4.9 4.14 4.19, $(TARGET_KERNEL_VERSION)))
-PRODUCT_VENDOR_PROPERTIES += \
-    debug.sf.disable_client_composition_cache=1
+# Placeholder
 endif
 
 # Properties for <4.19 targets
@@ -68,12 +64,12 @@ endif
 
 # Disable custom content metadata region on <5.15 targets
 ifneq (,$(filter 3.18 4.4 4.9 4.14 4.19 5.4 5.10, $(TARGET_KERNEL_VERSION)))
-TARGET_GRALLOC_HANDLE_HAS_NO_CUSTOM_CONTENT_MD_RESERVED_SIZE := true
+$(call soong_config_set, qtidisplaycommonsys, gralloc_handle_has_no_custom_content_md_reserved_size, true)
 endif
 
 # Disable UBWC-P on <6.1 targets
 ifneq (,$(filter 3.18 4.4 4.9 4.14 4.19 5.4 5.10 5.15, $(TARGET_KERNEL_VERSION)))
-TARGET_GRALLOC_HANDLE_HAS_NO_UBWCP := true
+$(call soong_config_set, qtidisplaycommonsys, gralloc_handle_has_no_ubwcp, true)
 endif
 
 # Use TARGET_KERNEL_VERSION for TARGET_DISP_DIR unless otherwise specified
